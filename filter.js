@@ -1,25 +1,67 @@
-$(document).ready(function() {
-            $('#onlyMalesFilter').click(function(){
-                console.log('onlyMalesFilter Filter executed');
-            });
+ $(document).ready(function() {
 
-            $('#fullTimeFilter').click(function(){
-                console.log('fullTimeFilter Filter executed');
-            });
+         $('#onlyMalesFilter').click(function(){
+             console.log('onlyMalesFilter Filter executed');
+             employeesRef.where("gender", "==", "Male")
+             .onSnapshot(function(querySnapshot) {
+                 LoadTableData(querySnapshot);
+             });
+         });
 
-            $('#olderThenFilter').click(function(){
-                console.log('olderThenFilter Filter executed');
-            });
+         $('#fullTimeFilter').click(function(){
+             employeesRef.where("isFullTime", "==", true)
+                 .onSnapshot(function(querySnapshot) {
+                     LoadTableData(querySnapshot);
+             });
+         });
 
-            $('#ageBetweenFilter').click(function(){
-                console.log('ageBetweenFilter Filter executed');
-            });
+         $('#olderThenFilter').click(function(){
+             //older than 30
+             employeesRef.where("age", ">=", 30)
+             .onSnapshot(function(querySnapshot) {
+                 LoadTableData(querySnapshot);
+             });
+         });
 
-            $('#yearsOfExperienceFilter').click(function(){
-                console.log('yearsOfExperienceFilter Filter executed');
-            });
+         $('#ageBetweenFilter').click(function(){
+             //older than 35, but younger than 50
+             employeesRef.where("age", ">=", 35).where("age", "<=", 50)
+             .onSnapshot(function(querySnapshot) {
+                 LoadTableData(querySnapshot);
+             });
+         });
 
-            $('#clearFilter').click(function(){
-                console.log('clearFilter Filter executed');
-            });
+         $('#yearsOfExperienceFilter').click(function(){
+             //female and 5-10 years of experience
+             employeesRef.where("gender", "==", "Female")
+             employeesRef.where("yearsOfExperience", ">=", 5).where("yearsOfExperience", "<=", 10)
+             .onSnapshot(function(querySnapshot) {
+                 LoadTableData(querySnapshot);
+             });
+         });
+
+         $('#clearFilter').click(function(){
+             employeesRef.get().then(function(querySnapshot) {
+                 LoadTableData(querySnapshot);
+             });
+         });
+         
+         function LoadTableData(querySnapshot){
+             let tableRow='';
+             querySnapshot.forEach(function(doc) {
+                 let document = doc.data();
+                 tableRow +='<tr>';
+                 tableRow += '<td class="fname">' + document.fName + '</td>';
+                 tableRow += '<td class="lname">' + document.lName + '</td>';
+                 tableRow += '<td class="email">' + document.email + '</td>';
+                 tableRow += '<td class="age">' + document.age + '</td>';
+                 tableRow += '<td class="gender">' + document.gender + '</td>';
+                 tableRow += '<td class="yearsofexperience">' + document.yearsOfExperience + '</td>';
+                 tableRow += '<td class="isfulltime">' + document.isFullTime + '</td>';
+                 tableRow += '<td class="editEmployee"><i class="fa fa-pencil" aria-hidden="true" style="color:green"></i></td>'
+                 tableRow += '<td class="deleteEmployee"><i class="fa fa-trash" aria-hidden="true" style="color:red"></i></td>'
+                 tableRow += '</tr>';
+             });
+             $('tbody.tbodyData').html(tableRow);
+         }
 });
